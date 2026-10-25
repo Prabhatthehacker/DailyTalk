@@ -177,22 +177,16 @@
           ".validate": "newData.isString()"
         },
         "authorName": {
-          ".validate": "newData.isString() && newData.val().length <= 60"
-        },
-        "text": {
-          ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 700"
-        },
-        "createdAt": {
-          ".validate": "newData.val() === now"
-        },
-        "expiresAt": {
-          ".validate": "newData.isNumber() && newData.val() > now + 82800000 && newData.val() <= now + 90000000"
-        },
-        "viewers": {
-          ".validate": "newData.hasChildren() <= 500",
-          "$v": {
-            ".validate": "newData.val() === true"
-          }
+              "conversations" : {
+      "$cid" : {
+        ".read" : "root.child('conversations').child($cid).child('members').child(auth.uid).val() === true",
+        "meta" : {
+          ".write" : "auth != null && !data.exists() && newData.child('createdBy').val() === auth.uid",
+          ".validate" : "newData.hasChildren(['type','createdBy','createdAt']) && newData.numChildren() <= 500",
+          "type" : { ".validate" : "newData.val() === 'direct' || newData.val() === 'group'" },
+          "createdBy" : { ".validate" : "newData.isString() && newData.val() === auth.uid" }
+        }
+
         },
         "$other": {
           ".validate": false
